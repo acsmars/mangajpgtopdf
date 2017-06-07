@@ -13,4 +13,5 @@ if __name__ == "__main__":
 	jobList = rootCollection.process()
 
 	print("Converting...")
-	converter.convert(jobList[0])
+	for job in jobList:
+		converter.convert(job)

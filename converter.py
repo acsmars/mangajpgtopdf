@@ -1,9 +1,14 @@
 import os
 from PIL import Image
-from PyPDF2 import PdfFileWriter
+from reportlab.pdfgen import canvas
 
 def convert(chapter):
+	outputFileName = os.path.join(chapter.outputDirectory, '') + chapter.name + '.pdf'
+	if os.path.isfile(outputFileName): # PDF already exists
+		print(outputFileName + " already exists")
+		return
 	print("Converting " + chapter.inputDirectory)
+
 	# Load Images
 	imageNames = []
 	for dirPath, dirNames, fileNames in os.walk(chapter.inputDirectory, topdown = True):
@@ -31,17 +36,17 @@ def convert(chapter):
 	imageFiles = [loadImage(x) for x in fileNames]
 
 	# Create Output PDF
-	newPDF = PdfFileWriter()
+	
+	newPDF = canvas.Canvas(outputFileName)
 
 	# Create pages from image files and add them to the PDF
 	for image in imageFiles:
-		newPage = newPDF.addBlankPage(width = image.width, height = image.height)
-		print(newPage.artBox)
 
-	outputFileName = os.path.join(chapter.outputDirectory, '') + chapter.name
-	outputFile = open(outputFileName, "wb")
-	newPDF.write(outputFile)
+		newPDF.setPageSize((image.width,image.height))
+		newPDF.drawImage(image.filename,0,0)
+		newPDF.showPage()
 
+	newPDF.save()
 	return
 
 

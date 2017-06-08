@@ -33,7 +33,7 @@ def convert(chapter):
 			print(extension.lower())
 		return image
 
-	imageFiles = [loadImage(x) for x in fileNames]
+	imageFiles = [loadImage(x) for x in fileNames if x]
 
 	# Create Output PDF
 	
@@ -41,7 +41,6 @@ def convert(chapter):
 
 	# Create pages from image files and add them to the PDF
 	for image in imageFiles:
-
 		newPDF.setPageSize((image.width,image.height))
 		newPDF.drawImage(image.filename,0,0)
 		newPDF.showPage()

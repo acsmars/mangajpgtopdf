@@ -15,10 +15,6 @@ def convert(chapter):
 		if dirPath != chapter.inputDirectory: break # We're only concerned with the top level contents
 		imageNames.extend(sorted(fileNames))
 
-	if len(imageNames) < 1: # How did this happen?
-		print("Error: Empty Chapter " + chapter.inputDirectory)
-		return
-
 	def loadImage(imageName):
 		fileName, extension = os.path.splitext(imageName)
 		image = None
@@ -35,9 +31,14 @@ def convert(chapter):
 
 	imageFiles = [loadImage(x) for x in fileNames if x is not None]
 
+	if len(imageFiles) < 1: # If there is no valid pages
+		print("Error: Empty Chapter " + chapter.inputDirectory)
+		return
+
 	# Create Output PDF
 	
 	newPDF = canvas.Canvas(outputFileName)
+	newPDF.setTitle(chapter.name)
 
 	# Create pages from image files and add them to the PDF
 	for image in imageFiles:
@@ -45,9 +46,9 @@ def convert(chapter):
 			newPDF.setPageSize((image.width,image.height))
 			newPDF.drawImage(image.filename,0,0)
 			newPDF.showPage()
+			newPDF.save()
 		except:
 			print("Error processing image: " + str(image))
-	newPDF.save()
 	return
 
 
